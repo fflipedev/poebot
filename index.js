@@ -2,6 +2,7 @@ const Discord = require('discord.js');
 const config = require('./config.json');
 const client = new Discord.Client();
 const axios = require('axios');
+const mongo = require('./database.js')
 
 const prefixo = '!';
 
@@ -24,12 +25,7 @@ client.on("message", function (message) {
     }
 
     if(command === "search")  {
-       
-      
-    }
-
-    if(command === 'outrocomando') {
-
+    
     }
 });
 
