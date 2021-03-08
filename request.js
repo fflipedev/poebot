@@ -7,7 +7,7 @@ class Request {
         this.method = method;
     }
 
-    searchRequest() {
+    searchRequest(intervalo) {
         return new Promise((resolve, reject) => {
             try {
                 let response = axios({

@@ -1,19 +1,27 @@
 const fs = require('fs');
 
-const JSON = require('./items.json');
+const items = require('./items.json');
 
-exports.search = function(query) {
-    const data = {};
-    JSON['result'].forEach((item, i) => {
+const search = query =>  {
+    const result = {};
+    items['result'].forEach((item, i) => {
         item['entries'].forEach((nome, i) => {
-            if(nome['name'] && nome['name'] === query) {
-                data.name = nome['name'];
-                data.type = nome['type'];
+           //comparar os arrays
+           if(nome['name']) {
+            let arrayNome = nome['name'].split();
+            if(new String(arrayNome).toLowerCase() == query) {
+                result.id = nome['name'];
+                result.tipo = nome['type'];
             }
+           }
         })
     })
 
-    return data;
+    return result;
+}
+
+module.exports = {
+    search
 }
 
 

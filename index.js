@@ -25,10 +25,7 @@ client.on("message", function (message) {
     }
 
     if(command === "search")  {
-        console.log(args)
-        const pesquisa = json.search(`${args[0]} ${args[1]}`);
-
-        console.log(pesquisa);
+        const pesquisa = json.search(args.join(' '));
         
         let url = 'https://www.pathofexile.com/api/trade/search/Hardcore%20Ritual';
         let body = {
@@ -36,8 +33,8 @@ client.on("message", function (message) {
                 "status": {
                     "option": "online"
                 },
-                "name": pesquisa.nome,
-                "type": pesquisa.type,
+                "name": pesquisa.id,
+                "type": pesquisa.tipo,
                 "stats": [{
                     "type": "and",
                     "filters": []
@@ -48,17 +45,18 @@ client.on("message", function (message) {
             }
         };
 
-        console.log(body);
+        console.log(body)
         
-        let getOferts = new Request(url, body, 'post');
+        let getItemsApi = new Request(url, body, 'post');
 
-        getOferts.searchRequest()
+        getItemsApi.searchRequest()
             .then(ofertas => {
-                ofertas.data['result'].slice(-2).forEach((hash, index) => {
-                    let getInfo = new Request(`https://www.pathofexile.com/api/trade/fetch/${hash}`, {}, 'get')
-                    getInfo.searchRequest().then(response => console.log(response.data['result']))
-                    .catch(err => console.log(err));
-                })
+                console.log(ofertas.data['result']).slice(-1);
+                // ofertas.data['result'].slice(-1).forEach((hash, index) => {
+                //     let getInfo = new Request(`https://www.pathofexile.com/api/trade/fetch/${hash}`, {}, 'get')
+                //     getInfo.searchRequest().then(response => console.log(response.data['result']))
+                //     .catch(err => console.log(err));
+                // })
             })
             .catch(error => {
                 console.log(error);
