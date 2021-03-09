@@ -47,15 +47,13 @@ client.on("message", function (message) {
 
         const data = request.search(url, body, 'post')
             .then(response => {
-                console.log(response);
-            });
-
-        // const embed = new MessageEmbed();
-        //     .setTitle('Resultado da pesquisa')
-        //     .setColor(0xff0000)
-        //     .setDescription(`Foram encontradas ${ofertas} trocas em aberto`);
-
-        // message.reply(embed);
+                const embed = new MessageEmbed()
+                    .setTitle('Resultado da Pesquisa')
+                    .setColor(0xfcba03)
+                    .setDescription(`Foram encontradas ${response.result.length} trocas em aberto`);
+                message.reply(embed);
+            })
+            .catch(err => console.log(err.data));
     
     }
 });

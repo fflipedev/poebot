@@ -8,7 +8,7 @@ const search = async (url, body, method) => {
             data: body
         });
         
-        return response;
+        return response.data;
     } catch (err) {
         throw err;
     }
