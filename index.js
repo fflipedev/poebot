@@ -1,17 +1,17 @@
-const Discord = require('discord.js');
+const { Client, MessageEmbed } = require('discord.js');
 const config = require('./config.json');
-const client = new Discord.Client();
+const client = new Client();
 const json = require('./colecao.js');
-const Request = require('./request.js');
+const request = require('./request.js');
 
 const prefixo = '!';
 
 client.on('ready', function ( ) {
     // client.channels.cache.get('795676425852026900').send('eae');
-   
 });
 
 client.on("message", function (message) {
+
     if(message.author.bot) return;
     if(!message.content.startsWith(prefixo)) return;
 
@@ -45,22 +45,18 @@ client.on("message", function (message) {
             }
         };
 
-        console.log(body)
-        
-        let getItemsApi = new Request(url, body, 'post');
-
-        getItemsApi.searchRequest()
-            .then(ofertas => {
-                console.log(ofertas.data['result']).slice(-1);
-                // ofertas.data['result'].slice(-1).forEach((hash, index) => {
-                //     let getInfo = new Request(`https://www.pathofexile.com/api/trade/fetch/${hash}`, {}, 'get')
-                //     getInfo.searchRequest().then(response => console.log(response.data['result']))
-                //     .catch(err => console.log(err));
-                // })
-            })
-            .catch(error => {
-                console.log(error);
+        const data = request.search(url, body, 'post')
+            .then(response => {
+                console.log(response);
             });
+
+        // const embed = new MessageEmbed();
+        //     .setTitle('Resultado da pesquisa')
+        //     .setColor(0xff0000)
+        //     .setDescription(`Foram encontradas ${ofertas} trocas em aberto`);
+
+        // message.reply(embed);
+    
     }
 });
 
