@@ -3,7 +3,6 @@ const config = require('./config.json');
 const client = new Client();
 const json = require('./colecao.js');
 const request = require('./request.js');
-
 const prefixo = '!';
 
 client.on('ready', function ( ) {
@@ -24,8 +23,9 @@ client.on("message", function (message) {
         message.reply(`Pong! Latencia de ${timeTaken}ms`)
     }
 
-    if(command === "search")  {
-        const pesquisa = json.search(args.join(' '));
+    if(command === "trade")  {
+        const item = args.join(' ');
+        const pesquisa = json.search(item);
         
         let url = 'https://www.pathofexile.com/api/trade/search/Hardcore%20Ritual';
         let body = {
@@ -45,13 +45,27 @@ client.on("message", function (message) {
             }
         };
 
+        const limit = 5; //limite de registros por pagina
+
         const data = request.search(url, body, 'post')
             .then(response => {
+                let count = 0;
+                console.log(response);
                 const embed = new MessageEmbed()
-                    .setTitle('Resultado da Pesquisa')
+                    .setTitle(`Resultado da Pesquisa - ${item}`)
                     .setColor(0xfcba03)
                     .setDescription(`Foram encontradas ${response.result.length} trocas em aberto`);
-                message.reply(embed);
+                
+                response.result.forEach(hash => { 
+                    if(count >= limit) return;
+                    
+                    embed.addField(hash)
+                    count++;
+                });
+                message.reply(embed)
+                    .then((message) => {
+                        
+                    });
             })
             .catch(err => console.log(err.data));
     
