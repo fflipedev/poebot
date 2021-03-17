@@ -1,9 +1,9 @@
 const { Client, MessageEmbed, WebhookClient } = require('discord.js');
 const config = require('./config.json');
 const client = new Client();
-const json = require('./colecao.js');
-const { Request } = require('./request.js');
+
 const prefixo = '!';
+const items = require('./items.js');
 
 client.on('ready', function ( ) {
     // client.channels.cache.get('795676425852026900').send('eae');
@@ -29,64 +29,19 @@ client.on("message", function (message) {
     }
 
     if(command === "trade")  {
-        const item = args.join(' ');
-        const pesquisa = json.search(item);
-        
-        let url = 'https://www.pathofexile.com/api/trade/search/Hardcore%20Ritual';
-        let body = {
-            "query": {
-                "status": {
-                    "option": "online"
-                },
-                "name": pesquisa.id,
-                "type": pesquisa.tipo,
-                "stats": [{
-                    "type": "and",
-                    "filters": []
-                }]
-            },
-            "sort": {
-                "price": "asc"
-            }
-        };
 
-        const limit = 2; //limite de registros por pagina
-
-        const getItems = new Request(url, body, 'post')
-            .search()
-            .then(response => {
-                let count = 0;
-                // console.log(response);
+        const consulta = args.join(' ');
+        const result = items.getHashs(consulta, data => {
                 const embed = new MessageEmbed()
-                    .setTitle(`Resultado da Pesquisa - ${item}`)
+                    .setTitle(`Resultado da Pesquisa - ${consulta}`)
                     .setColor(0xfcba03)
-                    .setDescription(`Foram encontradas ${response.result.length} trocas em aberto`);
+                    .setDescription(`Foram encontradas ${data.length} trocas em aberto`);
+                for (item of data) {
+                    embed.addField(item.nome, item.price);
+                }
+                message.reply(embed);
+        });
 
-        
-                    response.result.forEach(hash => { 
-                        setTimeout(() => {
-                            if(count >= limit) return;
-    
-                            const getItem = new Request(`https://www.pathofexile.com/api/trade/fetch/${hash}`, {}, 'get')
-                                    .search()
-                                    .then(item => {
-                                        embed.addField(item['result'][0].item.name, `${item['result'][0].item.name} chaos`)
-                                        console.log(item['result'][0].item.name)
-                                    });
-                                                
-                            count++;
-                        }, 3000)
-                    });
-                
-
-                message.reply(embed)
-                    .then((message) => {
-                        message.react('⬅️');
-                        message.react('➡️');
-                    });
-            })
-            .catch(err => console.log(err.data));
-    
     }
 });
 
